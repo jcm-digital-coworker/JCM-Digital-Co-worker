@@ -127,14 +127,14 @@ export default function App() {
   return (
     <div style={pageStyle}>
       <div style={appHeaderStyle}>
-        <h1 style={{ margin: 0 }}>JCM Digital Co-worker</h1>
-        <p style={{ color: "#64748b", margin: "6px 0 0 0" }}>
+        <h1 style={appTitleStyle}>JCM Digital Co-worker</h1>
+        <p style={appSubtitleStyle}>
           Plant-wide machine, maintenance, simulation, and documentation companion
         </p>
       </div>
-
+  
       <RoleSelector roleView={roleView} setRoleView={setRoleView} />
-
+      
       <div style={topTabBarStyle}>
         <TabButton active={tab === "machines"} onClick={() => setTab("machines")}>
           Machines
@@ -744,6 +744,21 @@ const pageStyle: React.CSSProperties = {
 const appHeaderStyle: React.CSSProperties = {
   textAlign: "center",
   marginBottom: 16,
+  padding: "12px 8px",
+};
+
+const appTitleStyle: React.CSSProperties = {
+  margin: 0,
+  fontSize: 28,
+  lineHeight: 1.1,
+};
+
+const appSubtitleStyle: React.CSSProperties = {
+  color: "#64748b",
+  margin: "8px auto 0 auto",
+  fontSize: 14,
+  lineHeight: 1.35,
+  maxWidth: 520,
 };
 
 const topTabBarStyle: React.CSSProperties = {
