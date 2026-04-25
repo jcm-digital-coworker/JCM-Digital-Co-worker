@@ -766,6 +766,7 @@ const topTabBarStyle: React.CSSProperties = {
   display: "flex",
   gap: 8,
   width: "100%",
+  flexWrap: "wrap",
 };
 
 const departmentCardGridStyle: React.CSSProperties = {
