@@ -10,6 +10,8 @@ import StatusBadge from "./components/StatusBadge";
 import TabButton from "./components/TabButton";
 import Lv4500JcmSimulator from "./components/Lv4500JcmSimulator";
 import { runLightMachineSimulation } from "./logic/machineSimulators";
+import { riskItems } from "./data/risk";
+import type { RiskItem } from "./types/risk";
 
 type Tab = "machines" | "alerts" | "simulation" | "maintenance" | "documents";
 type DetailTab = "overview" | "setup" | "history" | "notes";
@@ -324,12 +326,75 @@ function DepartmentCards({
 }
 
 function RiskSignoffPreview({ roleView }: { roleView: RoleView }) {
+  const activeRisks = riskItems.filter((risk) => risk.signoffStatus !== "Signed");
+  const highRisks = activeRisks.filter(
+    (risk) => risk.level === "HIGH_RISK" || risk.level === "STOP"
+  );
+
   return (
     <div style={{ ...cardStyle, textAlign: "center", background: "#eff6ff" }}>
-      <strong>Future Risk / Signoff Layer</strong>
-      <p style={{ color: "#1e3a8a", marginBottom: 0 }}>
-        Current view: {roleView}. Later this will support co-worker checks,
-        supervisor signoffs, escalation, email, and push notifications.
+      <strong>Risk / Signoff Layer</strong>
+
+      <p style={{ color: "#1e3a8a" }}>
+        Current view: {roleView}. This is read-only for now.
+      </p>
+
+      <div style={statGridStyle}>
+        <MaintenanceStat label="Open Risks" value={String(activeRisks.length)} />
+        <MaintenanceStat label="High Risk" value={String(highRisks.length)} />
+        <MaintenanceStat
+          label="Pending Signoff"
+          value={String(activeRisks.filter((r) => r.signoffStatus === "Pending").length)}
+        />
+      </div>
+
+      {activeRisks.slice(0, 3).map((risk) => (
+        <RiskCard key={risk.id} risk={risk} />
+      ))}
+    </div>
+  );
+}
+
+function RiskCard({ risk }: { risk: RiskItem }) {
+  const style = riskLevelStyle(risk.level);
+
+  return (
+    <div
+      style={{
+        marginTop: 12,
+        padding: 12,
+        borderRadius: 14,
+        border: `1px solid ${style.border}`,
+        background: style.background,
+        textAlign: "center",
+      }}
+    >
+      <span
+        style={{
+          display: "inline-block",
+          padding: "5px 10px",
+          borderRadius: 999,
+          fontSize: 12,
+          fontWeight: 900,
+          color: style.color,
+          background: "white",
+          border: `1px solid ${style.border}`,
+          marginBottom: 8,
+        }}
+      >
+        {risk.level}
+      </span>
+
+      <div style={{ fontWeight: 900 }}>{risk.title}</div>
+
+      <p style={{ color: "#334155", lineHeight: 1.45 }}>{risk.description}</p>
+
+      <p style={{ color: "#1e3a8a", lineHeight: 1.45 }}>
+        <strong>Recommended:</strong> {risk.recommendedAction}
+      </p>
+
+      <p style={{ color: "#64748b", marginBottom: 0 }}>
+        <strong>Signoff:</strong> {risk.requiredSignoff} · {risk.signoffStatus}
       </p>
     </div>
   );
@@ -732,6 +797,26 @@ function documentPillStyle(status: PlantDocument["status"]): React.CSSProperties
   if (status === "Available") return { ...pillStyle, background: "#dcfce7", color: "#166534" };
   if (status === "Needs Upload") return { ...pillStyle, background: "#fee2e2", color: "#b91c1c" };
   return { ...pillStyle, background: "#fef3c7", color: "#92400e" };
+}
+
+function riskLevelStyle(level: RiskItem["level"]) {
+  if (level === "STOP") {
+    return { background: "#7f1d1d", border: "#7f1d1d", color: "#ffffff" };
+  }
+
+  if (level === "HIGH_RISK") {
+    return { background: "#fff1f2", border: "#fca5a5", color: "#b91c1c" };
+  }
+
+  if (level === "CAUTION") {
+    return { background: "#fffbeb", border: "#fcd34d", color: "#92400e" };
+  }
+
+  if (level === "WATCH") {
+    return { background: "#eff6ff", border: "#93c5fd", color: "#1d4ed8" };
+  }
+
+  return { background: "#ecfdf5", border: "#86efac", color: "#166534" };
 }
 
 const pageStyle: React.CSSProperties = {
