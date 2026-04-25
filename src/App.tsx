@@ -9,6 +9,7 @@ import MachineDetail from "./components/MachineDetail";
 import StatusBadge from "./components/StatusBadge";
 import TabButton from "./components/TabButton";
 import Lv4500JcmSimulator from "./components/Lv4500JcmSimulator";
+import { runLightMachineSimulation } from "./logic/machineSimulators";
 
 type Tab = "machines" | "alerts" | "simulation" | "maintenance" | "documents";
 type DetailTab = "overview" | "setup" | "history" | "notes";
@@ -415,6 +416,7 @@ function SimulationCard({
   onOpenSimulator: () => void;
 }) {
   const tint = getMachineCardTint(machine);
+  const sim = runLightMachineSimulation(machine);
 
   return (
     <div
@@ -434,16 +436,90 @@ function SimulationCard({
         <StatusBadge state={machine.state} />
       </div>
 
-      <p>
-        <strong>{machine.simulationStatus}</strong> — {machine.simulationSummary}
-      </p>
+      <div style={{ marginTop: 12 }}>
+        <span
+          style={{
+            display: "inline-block",
+            padding: "6px 10px",
+            borderRadius: 999,
+            fontSize: 12,
+            fontWeight: 900,
+            background:
+              sim.status === "READY"
+                ? "#dcfce7"
+                : sim.status === "CAUTION"
+                ? "#fef3c7"
+                : "#fee2e2",
+            color:
+              sim.status === "READY"
+                ? "#166534"
+                : sim.status === "CAUTION"
+                ? "#92400e"
+                : "#b91c1c",
+          }}
+        >
+          {sim.status}
+        </span>
+      </div>
+
+      <h3 style={{ marginBottom: 4 }}>{sim.title}</h3>
+      <p style={{ color: "#334155", lineHeight: 1.45 }}>{sim.summary}</p>
 
       {isLv4500(machine) ? (
         <button onClick={onOpenSimulator} style={primaryButtonStyle}>
           Open JCM Suite Simulator
         </button>
       ) : (
-        <div style={placeholderStyle}>Light simulator placeholder</div>
+        <div
+          style={{
+            marginTop: 12,
+            padding: 12,
+            borderRadius: 14,
+            border: "1px solid #e2e8f0",
+            background: "rgba(255,255,255,0.7)",
+            textAlign: "left",
+          }}
+        >
+          <strong>Light Simulator Checks</strong>
+
+          {sim.checks.map((check, index) => (
+            <p key={index} style={{ margin: "8px 0", color: "#334155" }}>
+              • {check}
+            </p>
+          ))}
+
+          {sim.warnings.length > 0 && (
+            <div
+              style={{
+                marginTop: 10,
+                padding: 10,
+                borderRadius: 12,
+                background: "#fff7ed",
+                color: "#9a3412",
+              }}
+            >
+              <strong>Warnings</strong>
+              {sim.warnings.map((warning, index) => (
+                <p key={index} style={{ margin: "8px 0" }}>
+                  • {warning}
+                </p>
+              ))}
+            </div>
+          )}
+
+          <div
+            style={{
+              marginTop: 10,
+              padding: 10,
+              borderRadius: 12,
+              background: "#eff6ff",
+              color: "#1e3a8a",
+            }}
+          >
+            <strong>Recommended Action</strong>
+            <p style={{ marginBottom: 0 }}>{sim.recommendedAction}</p>
+          </div>
+        </div>
       )}
     </div>
   );
