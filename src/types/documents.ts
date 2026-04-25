@@ -1,13 +1,15 @@
 import type { Department } from "./machine";
 
 export type DocumentCategory =
-  | "Print"
-  | "Program"
-  | "Macro"
-  | "Setup Guide"
+  | "Simulation"
   | "Maintenance"
+  | "Program / Macro"
+  | "Print"
   | "Manual"
-  | "Inspection";
+  | "Inspection"
+  | "Setup Guide";
+
+export type DocumentStatus = "Available" | "Placeholder" | "Needs Upload";
 
 export type PlantDocument = {
   id: string;
@@ -15,6 +17,7 @@ export type PlantDocument = {
   department: Department;
   machineId?: string;
   category: DocumentCategory;
+  status: DocumentStatus;
   description: string;
-  status: "Available" | "Placeholder" | "Needs Upload";
+  ownerRole: "Operator" | "Maintenance" | "Lead / Engineer" | "Shared";
 };

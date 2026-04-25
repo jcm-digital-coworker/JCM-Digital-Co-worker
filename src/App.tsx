@@ -630,26 +630,93 @@ function MaintenanceStat({ label, value }: { label: string; value: string }) {
 }
 
 function DocumentsView({ documents }: { documents: PlantDocument[] }) {
+  const categories: PlantDocument["category"][] = [
+    "Simulation",
+    "Maintenance",
+    "Program / Macro",
+    "Print",
+    "Manual",
+    "Inspection",
+    "Setup Guide",
+  ];
+
   return (
     <div>
       <div style={{ ...cardStyle, textAlign: "center" }}>
         <h3 style={{ marginTop: 0 }}>Plant Documents</h3>
         <p style={{ color: "#64748b" }}>
-          Placeholder document hub for prints, programs, macros, setup guides,
-          maintenance docs, and equipment manuals.
+          Read-only document hub for simulation references, prints, programs,
+          macros, maintenance docs, manuals, and setup guides.
         </p>
+
+        <div style={statGridStyle}>
+          <MaintenanceStat label="Total Docs" value={String(documents.length)} />
+          <MaintenanceStat
+            label="Available"
+            value={String(documents.filter((d) => d.status === "Available").length)}
+          />
+          <MaintenanceStat
+            label="Placeholders"
+            value={String(documents.filter((d) => d.status === "Placeholder").length)}
+          />
+          <MaintenanceStat
+            label="Needs Upload"
+            value={String(documents.filter((d) => d.status === "Needs Upload").length)}
+          />
+        </div>
       </div>
 
-      {documents.map((doc) => (
-        <div key={doc.id} style={{ ...cardStyle, textAlign: "center" }}>
-          <span style={documentPillStyle(doc.status)}>{doc.status}</span>
-          <h3>{doc.title}</h3>
-          <p style={{ color: "#64748b" }}>
-            {doc.department} · {doc.category}
-          </p>
-          <p style={{ color: "#334155", lineHeight: 1.45 }}>{doc.description}</p>
-        </div>
-      ))}
+      {categories.map((category) => {
+        const categoryDocs = documents.filter((doc) => doc.category === category);
+        if (categoryDocs.length === 0) return null;
+
+        return (
+          <section key={category} style={departmentSectionStyle}>
+            <div style={departmentHeaderStyle}>
+              <h3 style={{ margin: 0 }}>{category}</h3>
+              <span style={departmentCountStyle}>
+                {categoryDocs.length} doc{categoryDocs.length === 1 ? "" : "s"}
+              </span>
+            </div>
+
+            {categoryDocs.map((doc) => (
+              <div key={doc.id} style={{ ...cardStyle, textAlign: "center" }}>
+                <span style={documentPillStyle(doc.status)}>{doc.status}</span>
+
+                <h3>{doc.title}</h3>
+
+                <p style={{ color: "#64748b" }}>
+                  {doc.department} · {doc.category} · {doc.ownerRole}
+                </p>
+
+                {doc.machineId && (
+                  <p style={{ color: "#64748b", marginTop: -6 }}>
+                    Machine ID: {doc.machineId}
+                  </p>
+                )}
+
+                <p style={{ color: "#334155", lineHeight: 1.45 }}>
+                  {doc.description}
+                </p>
+
+                <div
+                  style={{
+                    marginTop: 12,
+                    padding: 10,
+                    borderRadius: 12,
+                    border: "1px solid #e2e8f0",
+                    background: "#f8fafc",
+                    color: "#64748b",
+                    fontWeight: 700,
+                  }}
+                >
+                  File attachment/link coming later
+                </div>
+              </div>
+            ))}
+          </section>
+        );
+      })}
     </div>
   );
 }
