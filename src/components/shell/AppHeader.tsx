@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 export default function AppHeader({ onMenuClick }: { onMenuClick: () => void }) {
     return (
       <header style={topShellStyle}>
@@ -15,7 +16,7 @@ export default function AppHeader({ onMenuClick }: { onMenuClick: () => void }) 
     );
   }
   
-  const topShellStyle: React.CSSProperties = {
+  const topShellStyle: CSSProperties = {
     display: "flex",
     alignItems: "center",
     gap: 12,
@@ -26,7 +27,7 @@ export default function AppHeader({ onMenuClick }: { onMenuClick: () => void }) 
     border: "1px solid #e2e8f0",
   };
   
-  const menuButtonStyle: React.CSSProperties = {
+  const menuButtonStyle: CSSProperties = {
     width: 44,
     height: 44,
     borderRadius: 12,
@@ -38,13 +39,13 @@ export default function AppHeader({ onMenuClick }: { onMenuClick: () => void }) 
     cursor: "pointer",
   };
   
-  const appTitleStyle: React.CSSProperties = {
+  const appTitleStyle: CSSProperties = {
     margin: 0,
     fontSize: 24,
     lineHeight: 1.1,
   };
   
-  const appSubtitleStyle: React.CSSProperties = {
+  const appSubtitleStyle: CSSProperties = {
     color: "#64748b",
     margin: "5px 0 0 0",
     fontSize: 13,

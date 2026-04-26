@@ -1,20 +1,27 @@
 import { useMemo, useState } from "react";
+import type { CSSProperties } from "react";
+
 import { machines } from "./data/machine";
 import { maintenanceTasks } from "./data/maintenance";
 import { plantDocuments } from "./data/documents";
 import { riskItems } from "./data/risk";
+
 import type { Department, Machine } from "./types/machine";
 import type { MaintenanceTask } from "./types/maintenance";
 import type { PlantDocument } from "./types/documents";
 import type { RiskItem } from "./types/risk";
+import type { AppTab, DepartmentFilter, RoleView } from "./types/app";
+
 import MachineDetail from "./components/MachineDetail";
 import StatusBadge from "./components/StatusBadge";
 import Lv4500JcmSimulator from "./components/Lv4500JcmSimulator";
-import { runLightMachineSimulation } from "./logic/machineSimulators";
-import type { AppTab, DepartmentFilter, RoleView } from "./types/app";
 import AppHeader from "./components/shell/AppHeader";
 import AppDrawer from "./components/shell/AppDrawer";
 import DepartmentCards from "./components/shell/DepartmentCards";
+
+import { runLightMachineSimulation } from "./logic/machineSimulators";
+
+type DetailTab = "overview" | "setup" | "history" | "notes";
 
 const departmentOrder: Department[] = [
   "Machine Shop",
@@ -132,20 +139,20 @@ export default function App() {
   return (
     <div style={pageStyle}>
       <AppDrawer
-  open={menuOpen}
-  tab={tab}
-  setTab={(nextTab) => {
-    setTab(nextTab);
-    setMenuOpen(false);
-  }}
-  roleView={roleView}
-  setRoleView={setRoleView}
-  departmentFilter={departmentFilter}
-  setDepartmentFilter={setDepartmentFilter}
-  onClose={() => setMenuOpen(false)}
-/>
+        open={menuOpen}
+        tab={tab}
+        setTab={(nextTab) => {
+          setTab(nextTab);
+          setMenuOpen(false);
+        }}
+        roleView={roleView}
+        setRoleView={setRoleView}
+        departmentFilter={departmentFilter}
+        setDepartmentFilter={setDepartmentFilter}
+        onClose={() => setMenuOpen(false)}
+      />
 
-<AppHeader onMenuClick={() => setMenuOpen(true)} />
+      <AppHeader onMenuClick={() => setMenuOpen(true)} />
 
       <DepartmentCards
         machines={sortedMachines}
@@ -226,93 +233,6 @@ export default function App() {
   );
 }
 
- {
-  const tabs: { id: Tab; label: string }[] = [
-    { id: "dashboard", label: "Dashboard" },
-    { id: "machines", label: "Machines" },
-    { id: "alerts", label: "Alerts" },
-    { id: "simulation", label: "Simulation" },
-    { id: "maintenance", label: "Maintenance" },
-    { id: "documents", label: "Documents" },
-    { id: "risk", label: "Risk / Signoffs" },
-  ];
-
-  const departments: DepartmentFilter[] = ["All", ...departmentOrder];
-  const roles: RoleView[] = ["Operator", "Maintenance", "Lead / Engineer"];
-
-  if (!open) return null;
-
-  return (
-    <>
-      <div style={drawerBackdropStyle} onClick={onClose} />
-
-      <aside style={drawerStyle}>
-        <div style={drawerHeaderStyle}>
-          <strong>JCM Digital Co-worker</strong>
-          <button onClick={onClose} style={closeButtonStyle}>
-            ×
-          </button>
-        </div>
-
-        <div style={drawerSectionStyle}>
-          <div style={drawerLabelStyle}>Menu</div>
-          {tabs.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setTab(item.id)}
-              style={{
-                ...drawerNavButtonStyle,
-                background: tab === item.id ? "#111827" : "white",
-                color: tab === item.id ? "white" : "#111827",
-              }}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-
-        <div style={drawerSectionStyle}>
-          <div style={drawerLabelStyle}>Department</div>
-          {departments.map((department) => (
-            <button
-              key={department}
-              onClick={() => setDepartmentFilter(department)}
-              style={{
-                ...drawerNavButtonStyle,
-                background: departmentFilter === department ? "#eff6ff" : "white",
-                color: "#111827",
-                border:
-                  departmentFilter === department
-                    ? "1px solid #93c5fd"
-                    : "1px solid #e2e8f0",
-              }}
-            >
-              {department}
-            </button>
-          ))}
-        </div>
-
-        <div style={drawerSectionStyle}>
-          <div style={drawerLabelStyle}>Role View</div>
-          {roles.map((role) => (
-            <button
-              key={role}
-              onClick={() => setRoleView(role)}
-              style={{
-                ...drawerNavButtonStyle,
-                background: roleView === role ? "#111827" : "white",
-                color: roleView === role ? "white" : "#111827",
-              }}
-            >
-              {role}
-            </button>
-          ))}
-        </div>
-      </aside>
-    </>
-  );
-}
-
 function DashboardView({
   machines,
   alerts,
@@ -357,18 +277,10 @@ function DashboardView({
       </div>
 
       <div style={quickActionGridStyle}>
-        <button style={quickActionStyle} onClick={() => onGoToTab("alerts")}>
-          View Alerts
-        </button>
-        <button style={quickActionStyle} onClick={() => onGoToTab("simulation")}>
-          Open Simulation
-        </button>
-        <button style={quickActionStyle} onClick={() => onGoToTab("maintenance")}>
-          Maintenance
-        </button>
-        <button style={quickActionStyle} onClick={() => onGoToTab("documents")}>
-          Documents
-        </button>
+        <button style={quickActionStyle} onClick={() => onGoToTab("alerts")}>View Alerts</button>
+        <button style={quickActionStyle} onClick={() => onGoToTab("simulation")}>Open Simulation</button>
+        <button style={quickActionStyle} onClick={() => onGoToTab("maintenance")}>Maintenance</button>
+        <button style={quickActionStyle} onClick={() => onGoToTab("documents")}>Documents</button>
       </div>
 
       {highRisks.length > 0 && (
@@ -411,59 +323,6 @@ function DashboardView({
           })}
         </div>
       )}
-    </div>
-  );
-}
-
- {
-  const options: DepartmentFilter[] = ["All", ...departmentOrder];
-
-  return (
-    <div style={departmentCardGridStyle}>
-      {options.map((department) => {
-        const deptMachines =
-          department === "All"
-            ? machines
-            : machines.filter((m) => m.department === department);
-
-        const deptAlerts =
-          department === "All"
-            ? alerts
-            : alerts.filter((m) => m.department === department);
-
-        const deptTasks =
-          department === "All"
-            ? tasks
-            : tasks.filter((task) => {
-                const machine = machines.find((m) => m.id === task.machineId);
-                return machine?.department === department;
-              });
-
-        const active = selected === department;
-
-        return (
-          <button
-            key={department}
-            onClick={() => onSelect(department)}
-            style={{
-              ...departmentCardStyle,
-              border: active ? "2px solid #111827" : "1px solid #d1d5db",
-              background: active ? "#f8fafc" : "white",
-            }}
-          >
-            <div style={{ fontWeight: 900 }}>{department}</div>
-            <div style={{ color: "#64748b", marginTop: 6 }}>
-              {deptMachines.length} machines
-            </div>
-            <div style={{ color: "#b91c1c", marginTop: 4 }}>
-              {deptAlerts.length} alerts
-            </div>
-            <div style={{ color: "#92400e", marginTop: 4 }}>
-              {deptTasks.filter((t) => t.status !== "OK").length} maintenance
-            </div>
-          </button>
-        );
-      })}
     </div>
   );
 }
@@ -529,9 +388,7 @@ function MachineCard({
       </div>
 
       <div style={{ marginTop: 12 }}>
-        <div>
-          <strong>Program:</strong> {machine.program}
-        </div>
+        <div><strong>Program:</strong> {machine.program}</div>
         <div>
           <strong>Last Tool:</strong> {machine.lastTool.toolNumber} -{" "}
           {machine.lastTool.description}
@@ -958,24 +815,24 @@ function riskLevelStyle(level: RiskItem["level"]) {
   return { background: "#ecfdf5", border: "#86efac", color: "#166534" };
 }
 
-function documentPillStyle(status: PlantDocument["status"]): React.CSSProperties {
+function documentPillStyle(status: PlantDocument["status"]): CSSProperties {
   if (status === "Available") return { ...pillStyle, background: "#dcfce7", color: "#166534" };
   if (status === "Needs Upload") return { ...pillStyle, background: "#fee2e2", color: "#b91c1c" };
   return { ...pillStyle, background: "#fef3c7", color: "#92400e" };
 }
 
-const pageStyle: React.CSSProperties = {
+const pageStyle: CSSProperties = {
   padding: 16,
   fontFamily: "Arial, sans-serif",
   background: "#f8fafc",
   minHeight: "100vh",
 };
 
-const departmentSectionStyle: React.CSSProperties = {
+const departmentSectionStyle: CSSProperties = {
   marginTop: 18,
 };
 
-const departmentHeaderStyle: React.CSSProperties = {
+const departmentHeaderStyle: CSSProperties = {
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
@@ -984,7 +841,7 @@ const departmentHeaderStyle: React.CSSProperties = {
   color: "#111827",
 };
 
-const departmentCountStyle: React.CSSProperties = {
+const departmentCountStyle: CSSProperties = {
   fontSize: 12,
   fontWeight: 800,
   color: "#64748b",
@@ -994,7 +851,7 @@ const departmentCountStyle: React.CSSProperties = {
   padding: "5px 10px",
 };
 
-const cardStyle: React.CSSProperties = {
+const cardStyle: CSSProperties = {
   border: "1px solid #ddd",
   borderRadius: 16,
   padding: 16,
@@ -1002,7 +859,7 @@ const cardStyle: React.CSSProperties = {
   background: "white",
 };
 
-const backButtonStyle: React.CSSProperties = {
+const backButtonStyle: CSSProperties = {
   marginBottom: 16,
   padding: "10px 14px",
   borderRadius: 10,
@@ -1012,7 +869,7 @@ const backButtonStyle: React.CSSProperties = {
   fontWeight: 700,
 };
 
-const primaryButtonStyle: React.CSSProperties = {
+const primaryButtonStyle: CSSProperties = {
   marginTop: 8,
   padding: "10px 14px",
   borderRadius: 10,
@@ -1023,7 +880,7 @@ const primaryButtonStyle: React.CSSProperties = {
   cursor: "pointer",
 };
 
-const placeholderStyle: React.CSSProperties = {
+const placeholderStyle: CSSProperties = {
   marginTop: 10,
   padding: 10,
   borderRadius: 12,
@@ -1033,28 +890,28 @@ const placeholderStyle: React.CSSProperties = {
   fontWeight: 700,
 };
 
-const statGridStyle: React.CSSProperties = {
+const statGridStyle: CSSProperties = {
   display: "grid",
   gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
   gap: 10,
   marginTop: 12,
 };
 
-const statCardStyle: React.CSSProperties = {
+const statCardStyle: CSSProperties = {
   border: "1px solid #e2e8f0",
   borderRadius: 12,
   padding: 10,
   background: "white",
 };
 
-const quickActionGridStyle: React.CSSProperties = {
+const quickActionGridStyle: CSSProperties = {
   display: "grid",
   gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
   gap: 10,
   marginTop: 12,
 };
 
-const quickActionStyle: React.CSSProperties = {
+const quickActionStyle: CSSProperties = {
   padding: 14,
   borderRadius: 14,
   border: "1px solid #111827",
@@ -1064,7 +921,7 @@ const quickActionStyle: React.CSSProperties = {
   cursor: "pointer",
 };
 
-const attentionButtonStyle: React.CSSProperties = {
+const attentionButtonStyle: CSSProperties = {
   display: "block",
   width: "100%",
   marginTop: 8,
@@ -1077,7 +934,7 @@ const attentionButtonStyle: React.CSSProperties = {
   cursor: "pointer",
 };
 
-const miniWatchCardStyle: React.CSSProperties = {
+const miniWatchCardStyle: CSSProperties = {
   marginTop: 10,
   padding: 12,
   borderRadius: 14,
@@ -1085,7 +942,7 @@ const miniWatchCardStyle: React.CSSProperties = {
   background: "#fffbeb",
 };
 
-const simCheckPanelStyle: React.CSSProperties = {
+const simCheckPanelStyle: CSSProperties = {
   marginTop: 12,
   padding: 12,
   borderRadius: 14,
@@ -1094,7 +951,7 @@ const simCheckPanelStyle: React.CSSProperties = {
   textAlign: "left",
 };
 
-const warningPanelStyle: React.CSSProperties = {
+const warningPanelStyle: CSSProperties = {
   marginTop: 10,
   padding: 10,
   borderRadius: 12,
@@ -1102,7 +959,7 @@ const warningPanelStyle: React.CSSProperties = {
   color: "#9a3412",
 };
 
-const recommendedPanelStyle: React.CSSProperties = {
+const recommendedPanelStyle: CSSProperties = {
   marginTop: 10,
   padding: 10,
   borderRadius: 12,
@@ -1110,7 +967,7 @@ const recommendedPanelStyle: React.CSSProperties = {
   color: "#1e3a8a",
 };
 
-const resourceLinkStyle: React.CSSProperties = {
+const resourceLinkStyle: CSSProperties = {
   display: "block",
   textDecoration: "none",
   textAlign: "center",
@@ -1122,7 +979,7 @@ const resourceLinkStyle: React.CSSProperties = {
   fontWeight: 900,
 };
 
-const pillStyle: React.CSSProperties = {
+const pillStyle: CSSProperties = {
   display: "inline-block",
   padding: "5px 10px",
   borderRadius: 999,

@@ -1,6 +1,7 @@
 import type { Department, Machine } from "../../types/machine";
 import type { MaintenanceTask } from "../../types/maintenance";
 import type { DepartmentFilter } from "../../types/app";
+import type { CSSProperties } from "react";
 
 const departmentOrder: Department[] = [
   "Machine Shop",
@@ -73,14 +74,14 @@ export default function DepartmentCards({
   );
 }
 
-const departmentCardGridStyle: React.CSSProperties = {
+const departmentCardGridStyle: CSSProperties = {
   display: "grid",
   gridTemplateColumns: "repeat(auto-fit, minmax(145px, 1fr))",
   gap: 10,
   marginBottom: 16,
 };
 
-const departmentCardStyle: React.CSSProperties = {
+const departmentCardStyle: CSSProperties = {
   padding: 12,
   borderRadius: 16,
   cursor: "pointer",

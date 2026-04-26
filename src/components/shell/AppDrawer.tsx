@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type { Department } from "../../types/machine";
 import type { AppTab, DepartmentFilter, RoleView } from "../../types/app";
 
@@ -112,14 +113,14 @@ export default function AppDrawer({
   );
 }
 
-const drawerBackdropStyle: React.CSSProperties = {
+const drawerBackdropStyle: CSSProperties = {
   position: "fixed",
   inset: 0,
   background: "rgba(15,23,42,0.35)",
   zIndex: 20,
 };
 
-const drawerStyle: React.CSSProperties = {
+const drawerStyle: CSSProperties = {
   position: "fixed",
   top: 0,
   left: 0,
@@ -133,7 +134,7 @@ const drawerStyle: React.CSSProperties = {
   overflowY: "auto",
 };
 
-const drawerHeaderStyle: React.CSSProperties = {
+const drawerHeaderStyle: CSSProperties = {
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
@@ -141,7 +142,7 @@ const drawerHeaderStyle: React.CSSProperties = {
   marginBottom: 14,
 };
 
-const closeButtonStyle: React.CSSProperties = {
+const closeButtonStyle: CSSProperties = {
   width: 36,
   height: 36,
   borderRadius: 10,
@@ -151,11 +152,11 @@ const closeButtonStyle: React.CSSProperties = {
   cursor: "pointer",
 };
 
-const drawerSectionStyle: React.CSSProperties = {
+const drawerSectionStyle: CSSProperties = {
   marginTop: 16,
 };
 
-const drawerLabelStyle: React.CSSProperties = {
+const drawerLabelStyle: CSSProperties = {
   fontSize: 12,
   fontWeight: 900,
   color: "#64748b",
@@ -164,7 +165,7 @@ const drawerLabelStyle: React.CSSProperties = {
   marginBottom: 8,
 };
 
-const drawerNavButtonStyle: React.CSSProperties = {
+const drawerNavButtonStyle: CSSProperties = {
   display: "block",
   width: "100%",
   padding: "11px 12px",
