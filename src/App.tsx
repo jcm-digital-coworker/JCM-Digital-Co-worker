@@ -22,6 +22,7 @@ import DepartmentCards from "./components/shell/DepartmentCards";
 import { runLightMachineSimulation } from "./logic/machineSimulators";
 
 import DashboardPage from "./pages/DashboardPage";
+import MachinesPage, { AlertsPage } from "./pages/MachinesPage";
 
 type DetailTab = "overview" | "setup" | "history" | "notes";
 
@@ -177,39 +178,18 @@ export default function App() {
 )}
       
       {tab === "machines" && (
-        <DepartmentSections
-          machines={filteredMachines}
-          renderMachine={(machine) => (
-            <MachineCard
-              key={machine.id}
-              machine={machine}
-              onClick={() => setSelected(machine)}
-            />
-          )}
-        />
-      )}
+  <MachinesPage
+    machines={filteredMachines}
+    onOpenMachine={setSelected}
+  />
+)}
 
-      {tab === "alerts" && (
-        <>
-          {filteredAlerts.length === 0 && (
-            <div style={{ ...cardStyle, textAlign: "center" }}>
-              <h3 style={{ marginTop: 0 }}>No Active Alerts</h3>
-              <p style={{ color: "#64748b" }}>Nothing currently needs attention.</p>
-            </div>
-          )}
-
-          <DepartmentSections
-            machines={filteredAlerts}
-            renderMachine={(machine) => (
-              <MachineCard
-                key={machine.id}
-                machine={machine}
-                onClick={() => setSelected(machine)}
-              />
-            )}
-          />
-        </>
-      )}
+{tab === "alerts" && (
+  <AlertsPage
+    alerts={filteredAlerts}
+    onOpenMachine={setSelected}
+  />
+)}
 
       {tab === "simulation" && (
         <DepartmentSections
