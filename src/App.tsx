@@ -21,7 +21,7 @@ import DepartmentCards from "./components/shell/DepartmentCards";
 
 import { runLightMachineSimulation } from "./logic/machineSimulators";
 
-//import DashboardPage from "./pages/DashboardPage";
+import DashboardPage from "./pages/DashboardPage";
 
 type DetailTab = "overview" | "setup" | "history" | "notes";
 
@@ -165,9 +165,15 @@ export default function App() {
       />
 
 {tab === "dashboard" && (
-  <div style={{ padding: 20, background: "white", borderRadius: 12 }}>
-    <h2>Dashboard inline test works</h2>
-  </div>
+  <DashboardPage
+    machines={filteredMachines}
+    alerts={filteredAlerts}
+    tasks={filteredMaintenanceTasks}
+    risks={filteredRisks}
+    roleView={roleView}
+    onOpenMachine={setSelected}
+    onGoToTab={setTab}
+  />
 )}
       
       {tab === "machines" && (
