@@ -205,7 +205,7 @@ export default function App() {
   />
 )}
 
-{tab === "documents" && <DocumentsView documents={filteredDocuments} />}
+{tab === "documents" && <DocumentsPage documents={filteredDocuments} />}
 
 {tab === "risk" && <RiskView risks={filteredRisks} roleView={roleView} />}
 </div>
