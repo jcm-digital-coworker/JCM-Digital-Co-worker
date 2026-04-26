@@ -21,7 +21,7 @@ import DepartmentCards from "./components/shell/DepartmentCards";
 
 import { runLightMachineSimulation } from "./logic/machineSimulators";
 
-import DashboardPage from "./pages/DashboardPage";
+//import DashboardPage from "./pages/DashboardPage";
 
 type DetailTab = "overview" | "setup" | "history" | "notes";
 
@@ -164,17 +164,11 @@ export default function App() {
         onSelect={setDepartmentFilter}
       />
 
-      {tab === "dashboard" && (
-       <DashboardPage
-         machines={filteredMachines}
-         alerts={filteredAlerts}
-         tasks={filteredMaintenanceTasks}
-         risks={filteredRisks}
-         roleView={roleView}
-         onOpenMachine={setSelected}
-         onGoToTab={setTab}
-            />
-      )}
+{tab === "dashboard" && (
+  <div style={{ padding: 20, background: "white", borderRadius: 12 }}>
+    <h2>Dashboard inline test works</h2>
+  </div>
+)}
       
       {tab === "machines" && (
         <DepartmentSections
@@ -231,84 +225,6 @@ export default function App() {
       {tab === "documents" && <DocumentsView documents={filteredDocuments} />}
 
       {tab === "risk" && <RiskView risks={filteredRisks} roleView={roleView} />}
-    </div>
-  );
-}
-
- {
-  const openMaintenance = tasks.filter((task) => task.status !== "OK");
-  const openRisks = risks.filter((risk) => risk.signoffStatus !== "Signed");
-  const highRisks = openRisks.filter(
-    (risk) => risk.level === "HIGH_RISK" || risk.level === "STOP"
-  );
-  const cautionSims = machines.filter((machine) => {
-    const sim = runLightMachineSimulation(machine);
-    return sim.status === "CAUTION" || sim.status === "BLOCKED";
-  });
-
-  return (
-    <div>
-      <div style={{ ...cardStyle, textAlign: "center" }}>
-        <h2 style={{ marginTop: 0 }}>Dashboard</h2>
-        <p style={{ color: "#64748b" }}>
-          Current role: {roleView}. Focused on what needs attention now.
-        </p>
-
-        <div style={statGridStyle}>
-          <DashboardStat label="Machines" value={String(machines.length)} />
-          <DashboardStat label="Alerts" value={String(alerts.length)} danger={alerts.length > 0} />
-          <DashboardStat label="Open Risks" value={String(openRisks.length)} danger={highRisks.length > 0} />
-          <DashboardStat label="Maintenance" value={String(openMaintenance.length)} danger={openMaintenance.length > 0} />
-        </div>
-      </div>
-
-      <div style={quickActionGridStyle}>
-        <button style={quickActionStyle} onClick={() => onGoToTab("alerts")}>View Alerts</button>
-        <button style={quickActionStyle} onClick={() => onGoToTab("simulation")}>Open Simulation</button>
-        <button style={quickActionStyle} onClick={() => onGoToTab("maintenance")}>Maintenance</button>
-        <button style={quickActionStyle} onClick={() => onGoToTab("documents")}>Documents</button>
-      </div>
-
-      {highRisks.length > 0 && (
-        <div style={{ ...cardStyle, textAlign: "center", background: "#fff1f2", border: "1px solid #fca5a5" }}>
-          <h3 style={{ marginTop: 0 }}>High Risk Items</h3>
-          {highRisks.slice(0, 3).map((risk) => (
-            <RiskCard key={risk.id} risk={risk} />
-          ))}
-        </div>
-      )}
-
-      {alerts.length > 0 && (
-        <div style={{ ...cardStyle, textAlign: "center" }}>
-          <h3 style={{ marginTop: 0 }}>Machines Needing Attention</h3>
-          {alerts.slice(0, 4).map((machine) => (
-            <button
-              key={machine.id}
-              onClick={() => onOpenMachine(machine)}
-              style={attentionButtonStyle}
-            >
-              {machine.name} · {machine.state}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {cautionSims.length > 0 && (
-        <div style={{ ...cardStyle, textAlign: "center" }}>
-          <h3 style={{ marginTop: 0 }}>Simulation Watchlist</h3>
-          {cautionSims.slice(0, 4).map((machine) => {
-            const sim = runLightMachineSimulation(machine);
-            return (
-              <div key={machine.id} style={miniWatchCardStyle}>
-                <strong>{machine.name}</strong>
-                <p style={{ margin: "6px 0", color: "#334155" }}>
-                  {sim.status} — {sim.title}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      )}
     </div>
   );
 }
@@ -554,23 +470,6 @@ function MaintenanceStat({ label, value }: { label: string; value: string }) {
         {label}
       </div>
       <div style={{ fontSize: 22, fontWeight: 900 }}>{value}</div>
-    </div>
-  );
-}
-
- {
-  return (
-    <div
-      style={{
-        ...statCardStyle,
-        border: danger ? "1px solid #fca5a5" : "1px solid #e2e8f0",
-        background: danger ? "#fff1f2" : "white",
-      }}
-    >
-      <div style={{ fontSize: 12, color: "#64748b", fontWeight: 800 }}>
-        {label}
-      </div>
-      <div style={{ fontSize: 24, fontWeight: 900 }}>{value}</div>
     </div>
   );
 }
