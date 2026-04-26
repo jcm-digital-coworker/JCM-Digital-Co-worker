@@ -11,18 +11,10 @@ import MachineDetail from "./components/MachineDetail";
 import StatusBadge from "./components/StatusBadge";
 import Lv4500JcmSimulator from "./components/Lv4500JcmSimulator";
 import { runLightMachineSimulation } from "./logic/machineSimulators";
-
-type Tab =
-  | "dashboard"
-  | "machines"
-  | "alerts"
-  | "simulation"
-  | "maintenance"
-  | "documents"
-  | "risk";
-type DetailTab = "overview" | "setup" | "history" | "notes";
-type DepartmentFilter = Department | "All";
-type RoleView = "Operator" | "Maintenance" | "Lead / Engineer";
+import type { AppTab, DepartmentFilter, RoleView } from "./types/app";
+import AppHeader from "./components/shell/AppHeader";
+import AppDrawer from "./components/shell/AppDrawer";
+import DepartmentCards from "./components/shell/DepartmentCards";
 
 const departmentOrder: Department[] = [
   "Machine Shop",
@@ -61,7 +53,7 @@ function filterByDepartment<T extends { department: Department }>(
 
 export default function App() {
   const [selected, setSelected] = useState<Machine | null>(null);
-  const [tab, setTab] = useState<Tab>("dashboard");
+  const [tab, setTab] = useState<AppTab>("dashboard");
   const [detailTab, setDetailTab] = useState<DetailTab>("overview");
   const [simulatorMachine, setSimulatorMachine] = useState<Machine | null>(null);
   const [departmentFilter, setDepartmentFilter] = useState<DepartmentFilter>("All");
@@ -140,31 +132,20 @@ export default function App() {
   return (
     <div style={pageStyle}>
       <AppDrawer
-        open={menuOpen}
-        tab={tab}
-        setTab={(nextTab) => {
-          setTab(nextTab);
-          setMenuOpen(false);
-        }}
-        roleView={roleView}
-        setRoleView={setRoleView}
-        departmentFilter={departmentFilter}
-        setDepartmentFilter={setDepartmentFilter}
-        onClose={() => setMenuOpen(false)}
-      />
+  open={menuOpen}
+  tab={tab}
+  setTab={(nextTab) => {
+    setTab(nextTab);
+    setMenuOpen(false);
+  }}
+  roleView={roleView}
+  setRoleView={setRoleView}
+  departmentFilter={departmentFilter}
+  setDepartmentFilter={setDepartmentFilter}
+  onClose={() => setMenuOpen(false)}
+/>
 
-      <header style={topShellStyle}>
-        <button onClick={() => setMenuOpen(true)} style={menuButtonStyle}>
-          ☰
-        </button>
-
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <h1 style={appTitleStyle}>JCM Digital Co-worker</h1>
-          <p style={appSubtitleStyle}>
-            Plant-wide machine, maintenance, simulation, and documentation companion
-          </p>
-        </div>
-      </header>
+<AppHeader onMenuClick={() => setMenuOpen(true)} />
 
       <DepartmentCards
         machines={sortedMachines}
@@ -245,25 +226,7 @@ export default function App() {
   );
 }
 
-function AppDrawer({
-  open,
-  tab,
-  setTab,
-  roleView,
-  setRoleView,
-  departmentFilter,
-  setDepartmentFilter,
-  onClose,
-}: {
-  open: boolean;
-  tab: Tab;
-  setTab: (tab: Tab) => void;
-  roleView: RoleView;
-  setRoleView: (role: RoleView) => void;
-  departmentFilter: DepartmentFilter;
-  setDepartmentFilter: (department: DepartmentFilter) => void;
-  onClose: () => void;
-}) {
+ {
   const tabs: { id: Tab; label: string }[] = [
     { id: "dashboard", label: "Dashboard" },
     { id: "machines", label: "Machines" },
@@ -365,7 +328,7 @@ function DashboardView({
   risks: RiskItem[];
   roleView: RoleView;
   onOpenMachine: (machine: Machine) => void;
-  onGoToTab: (tab: Tab) => void;
+  onGoToTab: (tab: AppTab) => void;
 }) {
   const openMaintenance = tasks.filter((task) => task.status !== "OK");
   const openRisks = risks.filter((risk) => risk.signoffStatus !== "Signed");
@@ -452,19 +415,7 @@ function DashboardView({
   );
 }
 
-function DepartmentCards({
-  machines,
-  alerts,
-  tasks,
-  selected,
-  onSelect,
-}: {
-  machines: Machine[];
-  alerts: Machine[];
-  tasks: MaintenanceTask[];
-  selected: DepartmentFilter;
-  onSelect: (department: DepartmentFilter) => void;
-}) {
+ {
   const options: DepartmentFilter[] = ["All", ...departmentOrder];
 
   return (
@@ -1018,120 +969,6 @@ const pageStyle: React.CSSProperties = {
   fontFamily: "Arial, sans-serif",
   background: "#f8fafc",
   minHeight: "100vh",
-};
-
-const topShellStyle: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: 12,
-  marginBottom: 16,
-  padding: 12,
-  borderRadius: 18,
-  background: "white",
-  border: "1px solid #e2e8f0",
-};
-
-const menuButtonStyle: React.CSSProperties = {
-  width: 44,
-  height: 44,
-  borderRadius: 12,
-  border: "1px solid #cbd5e1",
-  background: "#111827",
-  color: "white",
-  fontSize: 22,
-  fontWeight: 900,
-  cursor: "pointer",
-};
-
-const appTitleStyle: React.CSSProperties = {
-  margin: 0,
-  fontSize: 24,
-  lineHeight: 1.1,
-};
-
-const appSubtitleStyle: React.CSSProperties = {
-  color: "#64748b",
-  margin: "5px 0 0 0",
-  fontSize: 13,
-  lineHeight: 1.35,
-};
-
-const drawerBackdropStyle: React.CSSProperties = {
-  position: "fixed",
-  inset: 0,
-  background: "rgba(15,23,42,0.35)",
-  zIndex: 20,
-};
-
-const drawerStyle: React.CSSProperties = {
-  position: "fixed",
-  top: 0,
-  left: 0,
-  width: 310,
-  maxWidth: "85vw",
-  height: "100vh",
-  background: "#f8fafc",
-  zIndex: 30,
-  padding: 16,
-  boxShadow: "8px 0 24px rgba(0,0,0,0.18)",
-  overflowY: "auto",
-};
-
-const drawerHeaderStyle: React.CSSProperties = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  gap: 12,
-  marginBottom: 14,
-};
-
-const closeButtonStyle: React.CSSProperties = {
-  width: 36,
-  height: 36,
-  borderRadius: 10,
-  border: "1px solid #cbd5e1",
-  background: "white",
-  fontSize: 24,
-  cursor: "pointer",
-};
-
-const drawerSectionStyle: React.CSSProperties = {
-  marginTop: 16,
-};
-
-const drawerLabelStyle: React.CSSProperties = {
-  fontSize: 12,
-  fontWeight: 900,
-  color: "#64748b",
-  textTransform: "uppercase",
-  letterSpacing: "0.08em",
-  marginBottom: 8,
-};
-
-const drawerNavButtonStyle: React.CSSProperties = {
-  display: "block",
-  width: "100%",
-  padding: "11px 12px",
-  borderRadius: 12,
-  border: "1px solid #e2e8f0",
-  marginBottom: 8,
-  fontWeight: 800,
-  textAlign: "left",
-  cursor: "pointer",
-};
-
-const departmentCardGridStyle: React.CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(145px, 1fr))",
-  gap: 10,
-  marginBottom: 16,
-};
-
-const departmentCardStyle: React.CSSProperties = {
-  padding: 12,
-  borderRadius: 16,
-  cursor: "pointer",
-  textAlign: "center",
 };
 
 const departmentSectionStyle: React.CSSProperties = {
