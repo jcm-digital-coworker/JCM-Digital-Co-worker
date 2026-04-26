@@ -21,6 +21,8 @@ import DepartmentCards from "./components/shell/DepartmentCards";
 
 import { runLightMachineSimulation } from "./logic/machineSimulators";
 
+import DashboardPage from "./pages/DashboardPage";
+
 type DetailTab = "overview" | "setup" | "history" | "notes";
 
 const departmentOrder: Department[] = [
@@ -163,17 +165,17 @@ export default function App() {
       />
 
       {tab === "dashboard" && (
-        <DashboardView
-          machines={filteredMachines}
-          alerts={filteredAlerts}
-          tasks={filteredMaintenanceTasks}
-          risks={filteredRisks}
-          roleView={roleView}
-          onOpenMachine={setSelected}
-          onGoToTab={setTab}
-        />
+       <DashboardPage
+         machines={filteredMachines}
+         alerts={filteredAlerts}
+         tasks={filteredMaintenanceTasks}
+         risks={filteredRisks}
+         roleView={roleView}
+         onOpenMachine={setSelected}
+         onGoToTab={setTab}
+            />
       )}
-
+      
       {tab === "machines" && (
         <DepartmentSections
           machines={filteredMachines}
@@ -233,23 +235,7 @@ export default function App() {
   );
 }
 
-function DashboardView({
-  machines,
-  alerts,
-  tasks,
-  risks,
-  roleView,
-  onOpenMachine,
-  onGoToTab,
-}: {
-  machines: Machine[];
-  alerts: Machine[];
-  tasks: (MaintenanceTask & { department: Department })[];
-  risks: RiskItem[];
-  roleView: RoleView;
-  onOpenMachine: (machine: Machine) => void;
-  onGoToTab: (tab: AppTab) => void;
-}) {
+ {
   const openMaintenance = tasks.filter((task) => task.status !== "OK");
   const openRisks = risks.filter((risk) => risk.signoffStatus !== "Signed");
   const highRisks = openRisks.filter(
@@ -572,15 +558,7 @@ function MaintenanceStat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function DashboardStat({
-  label,
-  value,
-  danger = false,
-}: {
-  label: string;
-  value: string;
-  danger?: boolean;
-}) {
+ {
   return (
     <div
       style={{
@@ -919,27 +897,6 @@ const quickActionStyle: CSSProperties = {
   color: "white",
   fontWeight: 900,
   cursor: "pointer",
-};
-
-const attentionButtonStyle: CSSProperties = {
-  display: "block",
-  width: "100%",
-  marginTop: 8,
-  padding: 12,
-  borderRadius: 12,
-  border: "1px solid #fca5a5",
-  background: "#fff1f2",
-  color: "#991b1b",
-  fontWeight: 900,
-  cursor: "pointer",
-};
-
-const miniWatchCardStyle: CSSProperties = {
-  marginTop: 10,
-  padding: 12,
-  borderRadius: 14,
-  border: "1px solid #fcd34d",
-  background: "#fffbeb",
 };
 
 const simCheckPanelStyle: CSSProperties = {
