@@ -8,8 +8,6 @@ import { riskItems } from "./data/risk";
 
 import type { Department, Machine } from "./types/machine";
 import type { MaintenanceTask } from "./types/maintenance";
-import type { PlantDocument } from "./types/documents";
-import type { RiskItem } from "./types/risk";
 import type { AppTab, DepartmentFilter, RoleView } from "./types/app";
 
 import MachineDetail from "./components/MachineDetail";
@@ -38,20 +36,6 @@ function priorityRank(priority: Machine["alarmPriority"]) {
   if (priority === "ALARM") return 1;
   if (priority === "RESET") return 2;
   return 3;
-}
-
-function isLv4500(machine: Machine) {
-  return machine.name.includes("LV4500R");
-}
-
-function getMachineCardTint(machine: Machine) {
-  if (machine.state === "ALARM") return { background: "#fff1f2", border: "#fda4af" };
-  if (machine.state === "OFFLINE" || machine.alarmPriority === "RESET") {
-    return { background: "#fffbeb", border: "#fcd34d" };
-  }
-  if (machine.simulationStatus === "CAUTION") return { background: "#fefce8", border: "#fde68a" };
-  if (machine.state === "RUNNING") return { background: "#ecfdf5", border: "#86efac" };
-  return { background: "white", border: "#ddd" };
 }
 
 function filterByDepartment<T extends { department: Department }>(
@@ -220,37 +204,6 @@ const pageStyle: CSSProperties = {
   minHeight: "100vh",
 };
 
-const departmentSectionStyle: CSSProperties = {
-  marginTop: 18,
-};
-
-const departmentHeaderStyle: CSSProperties = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  gap: 12,
-  padding: "10px 4px",
-  color: "#111827",
-};
-
-const departmentCountStyle: CSSProperties = {
-  fontSize: 12,
-  fontWeight: 800,
-  color: "#64748b",
-  background: "white",
-  border: "1px solid #e2e8f0",
-  borderRadius: 999,
-  padding: "5px 10px",
-};
-
-const cardStyle: CSSProperties = {
-  border: "1px solid #ddd",
-  borderRadius: 16,
-  padding: 16,
-  marginTop: 12,
-  background: "white",
-};
-
 const backButtonStyle: CSSProperties = {
   marginBottom: 16,
   padding: "10px 14px",
@@ -259,81 +212,4 @@ const backButtonStyle: CSSProperties = {
   background: "white",
   cursor: "pointer",
   fontWeight: 700,
-};
-
-const primaryButtonStyle: CSSProperties = {
-  marginTop: 8,
-  padding: "10px 14px",
-  borderRadius: 10,
-  border: "1px solid #111827",
-  background: "#111827",
-  color: "white",
-  fontWeight: 800,
-  cursor: "pointer",
-};
-
-const placeholderStyle: CSSProperties = {
-  marginTop: 10,
-  padding: 10,
-  borderRadius: 12,
-  background: "rgba(255,255,255,0.65)",
-  border: "1px solid #e2e8f0",
-  color: "#64748b",
-  fontWeight: 700,
-};
-
-const statGridStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
-  gap: 10,
-  marginTop: 12,
-};
-
-const statCardStyle: CSSProperties = {
-  border: "1px solid #e2e8f0",
-  borderRadius: 12,
-  padding: 10,
-  background: "white",
-};
-
-const quickActionGridStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-  gap: 10,
-  marginTop: 12,
-};
-
-const quickActionStyle: CSSProperties = {
-  padding: 14,
-  borderRadius: 14,
-  border: "1px solid #111827",
-  background: "#111827",
-  color: "white",
-  fontWeight: 900,
-  cursor: "pointer",
-};
-
-const simCheckPanelStyle: CSSProperties = {
-  marginTop: 12,
-  padding: 12,
-  borderRadius: 14,
-  border: "1px solid #e2e8f0",
-  background: "rgba(255,255,255,0.7)",
-  textAlign: "left",
-};
-
-const warningPanelStyle: CSSProperties = {
-  marginTop: 10,
-  padding: 10,
-  borderRadius: 12,
-  background: "#fff7ed",
-  color: "#9a3412",
-};
-
-const recommendedPanelStyle: CSSProperties = {
-  marginTop: 10,
-  padding: 10,
-  borderRadius: 12,
-  background: "#eff6ff",
-  color: "#1e3a8a",
 };
