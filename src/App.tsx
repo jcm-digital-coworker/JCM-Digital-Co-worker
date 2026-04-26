@@ -22,6 +22,7 @@ import DashboardPage from "./pages/DashboardPage";
 import MachinesPage, { AlertsPage } from "./pages/MachinesPage";
 import SimulationPage from "./pages/SimulationPage";
 import MaintenancePage from "./pages/MaintenancePage";
+import DocumentsPage from "./pages/DocumentsPage";
 
 type DetailTab = "overview" | "setup" | "history" | "notes";
 
@@ -211,111 +212,6 @@ export default function App() {
 );
 }
 
-function DocumentsView({ documents }: { documents: PlantDocument[] }) {
-  const categories: PlantDocument["category"][] = [
-    "Simulation",
-    "Maintenance",
-    "Program / Macro",
-    "Print",
-    "Manual",
-    "Inspection",
-    "Setup Guide",
-  ];
-
-  return (
-    <div>
-      <div style={{ ...cardStyle, textAlign: "center" }}>
-        <h3 style={{ marginTop: 0 }}>Plant Documents</h3>
-        <p style={{ color: "#64748b" }}>
-          Read-only document hub for simulation references, prints, programs,
-          macros, maintenance docs, manuals, and setup guides.
-        </p>
-
-        <div style={statGridStyle}>
-          <MaintenanceStat label="Total Docs" value={String(documents.length)} />
-          <MaintenanceStat label="Available" value={String(documents.filter((d) => d.status === "Available").length)} />
-          <MaintenanceStat label="Placeholders" value={String(documents.filter((d) => d.status === "Placeholder").length)} />
-          <MaintenanceStat label="Needs Upload" value={String(documents.filter((d) => d.status === "Needs Upload").length)} />
-        </div>
-      </div>
-
-      <OfficialResourcesCard />
-
-      {categories.map((category) => {
-        const categoryDocs = documents.filter((doc) => doc.category === category);
-        if (categoryDocs.length === 0) return null;
-
-        return (
-          <section key={category} style={departmentSectionStyle}>
-            <div style={departmentHeaderStyle}>
-              <h3 style={{ margin: 0 }}>{category}</h3>
-              <span style={departmentCountStyle}>
-                {categoryDocs.length} doc{categoryDocs.length === 1 ? "" : "s"}
-              </span>
-            </div>
-
-            {categoryDocs.map((doc) => (
-              <div key={doc.id} style={{ ...cardStyle, textAlign: "center" }}>
-                <span style={documentPillStyle(doc.status)}>{doc.status}</span>
-
-                <h3>{doc.title}</h3>
-
-                <p style={{ color: "#64748b" }}>
-                  {doc.department} · {doc.category} · {doc.ownerRole}
-                </p>
-
-                {doc.machineId && (
-                  <p style={{ color: "#64748b", marginTop: -6 }}>
-                    Machine ID: {doc.machineId}
-                  </p>
-                )}
-
-                <p style={{ color: "#334155", lineHeight: 1.45 }}>
-                  {doc.description}
-                </p>
-
-                <div style={placeholderStyle}>File attachment/link coming later</div>
-              </div>
-            ))}
-          </section>
-        );
-      })}
-    </div>
-  );
-}
-
-function OfficialResourcesCard() {
-  const links = [
-    { label: "JCM Resources", url: "https://www.jcmindustries.com/resources/" },
-    { label: "Product Specifications", url: "https://www.jcmindustries.com/products/product-specifications/" },
-    { label: "Installation Instructions", url: "https://www.jcmindustries.com/resources/installation-instructions/" },
-    { label: "JCMU Training", url: "https://www.jcmindustries.com/JCM" },
-  ];
-
-  return (
-    <div style={{ ...cardStyle, textAlign: "center", background: "#eff6ff" }}>
-      <h3 style={{ marginTop: 0 }}>Official JCM Website Resources</h3>
-      <p style={{ color: "#1e3a8a" }}>
-        External links for product resources, installation instructions, specifications, and training.
-      </p>
-
-      <div style={quickActionGridStyle}>
-        {links.map((link) => (
-          <a
-            key={link.label}
-            href={link.url}
-            target="_blank"
-            rel="noreferrer"
-            style={resourceLinkStyle}
-          >
-            {link.label}
-          </a>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function RiskView({ risks, roleView }: { risks: RiskItem[]; roleView: RoleView }) {
   const openRisks = risks.filter((risk) => risk.signoffStatus !== "Signed");
 
@@ -393,12 +289,6 @@ function riskLevelStyle(level: RiskItem["level"]) {
   if (level === "CAUTION") return { background: "#fffbeb", border: "#fcd34d", color: "#92400e" };
   if (level === "WATCH") return { background: "#eff6ff", border: "#93c5fd", color: "#1d4ed8" };
   return { background: "#ecfdf5", border: "#86efac", color: "#166534" };
-}
-
-function documentPillStyle(status: PlantDocument["status"]): CSSProperties {
-  if (status === "Available") return { ...pillStyle, background: "#dcfce7", color: "#166534" };
-  if (status === "Needs Upload") return { ...pillStyle, background: "#fee2e2", color: "#b91c1c" };
-  return { ...pillStyle, background: "#fef3c7", color: "#92400e" };
 }
 
 const pageStyle: CSSProperties = {
@@ -524,24 +414,4 @@ const recommendedPanelStyle: CSSProperties = {
   borderRadius: 12,
   background: "#eff6ff",
   color: "#1e3a8a",
-};
-
-const resourceLinkStyle: CSSProperties = {
-  display: "block",
-  textDecoration: "none",
-  textAlign: "center",
-  padding: 12,
-  borderRadius: 14,
-  background: "white",
-  border: "1px solid #93c5fd",
-  color: "#1d4ed8",
-  fontWeight: 900,
-};
-
-const pillStyle: CSSProperties = {
-  display: "inline-block",
-  padding: "5px 10px",
-  borderRadius: 999,
-  fontSize: 12,
-  fontWeight: 800,
 };
