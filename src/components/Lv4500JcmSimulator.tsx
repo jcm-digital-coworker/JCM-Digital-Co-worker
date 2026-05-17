@@ -172,7 +172,7 @@ export default function Lv4500JcmSimulator() {
               <div style={cardStyle}>
                 <h3 style={cardTitleStyle}>Estimated Cycle Time</h3>
                 <InfoGrid>
-                  <InfoTile label="Total" value={`~${cycleTime.totalMinutes.toFixed(1)} min`} />
+                  <InfoTile label="Total" value={`${cycleTime.totalMinutes.toFixed(2)} min / ${(cycleTime.totalMinutes * 60).toFixed(1)} sec`} />
                   <InfoTile label="Cutting" value={`${cycleTime.cuttingMinutes.toFixed(1)} min`} />
                   <InfoTile label="Rapid" value={`${cycleTime.rapidMinutes.toFixed(1)} min`} />
                   <InfoTile label="Overhead" value={`${cycleTime.overheadMinutes.toFixed(1)} min`} />
