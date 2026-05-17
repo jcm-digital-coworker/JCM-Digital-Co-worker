@@ -74,7 +74,6 @@ export function runLv4500Logic(input: LogicInput): LogicResult {
   if (input.interruptFlag) messages.push("Interrupted cycle forces guarded mode and gauge check.");
   if (fivePartGaugeDue) messages.push("5-part gauge interval is due.");
 
-  const remainingBeforeCycle = Math.max(input.batchTarget - input.actualCount, 0);
   const lastTwoOfBatch = input.batchTarget > 2 && input.actualCount >= input.batchTarget - 2;
 
   let adaptiveThreadMode: 0 | 1 | 2 = 0;

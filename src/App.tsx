@@ -7,7 +7,6 @@ import { plantDocuments } from "./data/documents";
 import { riskItems } from "./data/risk";
 
 import type { Department, Machine } from "./types/machine";
-import type { MaintenanceTask } from "./types/maintenance";
 import type { AppTab, DepartmentFilter, RoleView } from "./types/app";
 
 import MachineDetail from "./components/MachineDetail";
